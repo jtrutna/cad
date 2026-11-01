@@ -667,6 +667,7 @@ ViewProviderSketch::ViewProviderSketch()
         "Object Style",
         (App::PropertyType)(App::Prop_None),
         "If true, this sketch will be colored based on user preferences. Turn it off to set color explicitly.");
+    TempoVis.setStatus(App::Property::NoModify, true);
 
     // TODO: This is part of a naive minimal implementation to substitute rendering order
     // Three equally visual layers to enable/disable layer.
