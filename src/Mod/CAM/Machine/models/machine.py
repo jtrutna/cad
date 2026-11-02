@@ -1285,46 +1285,7 @@ class Machine:
                             break
                         current = parent_axis.parent if parent_axis else None
 
-        # Validate sequence numbers are unique within each chain
-        chains = self._get_kinematic_chains()
-        for chain_name, chain_axes in chains.items():
-            sequences = [axis.sequence for axis in chain_axes]
-            if len(sequences) != len(set(sequences)):
-                errors.append(f"Duplicate sequence numbers in chain {chain_name}")
-
         return errors
-
-    def _get_kinematic_chains(self) -> Dict[str, List]:
-        """Group axes by their kinematic chains.
-
-        Returns:
-            Dictionary mapping chain names to lists of axes
-        """
-        chains = {}
-        all_axes = {**self.linear_axes, **self.rotary_axes}
-
-        # Find root axes (those with no parent)
-        root_axes = [name for name, axis in all_axes.items() if axis.parent is None]
-
-        for root_name in root_axes:
-            chain = []
-            visited = set()
-
-            def collect_chain(axis_name):
-                if axis_name in visited or axis_name not in all_axes:
-                    return
-                visited.add(axis_name)
-                chain.append(all_axes[axis_name])
-
-                # Find children
-                for child_name, child_axis in all_axes.items():
-                    if child_axis.parent == axis_name:
-                        collect_chain(child_name)
-
-            collect_chain(root_name)
-            chains[root_name] = chain
-
-        return chains
 
     def get_axis_chain(self, axis_name: str) -> List[str]:
         """Get the kinematic chain for a specific axis.
